@@ -1,4 +1,4 @@
-package com.hat.app;
+package com.simtuit.hat;
 
 import android.app.Activity;
 import android.app.ActionBar;
