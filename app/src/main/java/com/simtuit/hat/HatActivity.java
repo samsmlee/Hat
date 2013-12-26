@@ -6,7 +6,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 
-public class HatActivity extends Activity implements VoteFragment.OnFragmentInteractionListener{
+public class HatActivity extends Activity implements VoteFragment.OnFragmentInteractionListener, PickFragment.OnFragmentInteractionListener{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,9 +42,21 @@ public class HatActivity extends Activity implements VoteFragment.OnFragmentInte
     }
 
     @Override
-    public void onVoteSelected(long id) {
+    public void onPick(VoteContent.Vote picked) {
 
+        getFragmentManager().beginTransaction()
+                .replace(R.id.container, PickFragment.newInstance(picked.toString()))
+                .addToBackStack(null)
+                .commit();
     }
 
 
+    @Override
+    public void onEditHat() {
+
+        getFragmentManager().beginTransaction()
+                .replace(R.id.container, new VoteFragment())
+                .addToBackStack(null)
+                .commit();
+    }
 }

@@ -1,4 +1,4 @@
-package com.simtuit.hat.dummy;
+package com.simtuit.hat;
 
 import java.util.ArrayList;
 import java.util.HashMap;

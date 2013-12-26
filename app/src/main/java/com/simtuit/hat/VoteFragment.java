@@ -14,7 +14,7 @@ import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
-import com.simtuit.hat.dummy.VoteContent;
+import java.util.Random;
 
 /**
  * A fragment representing a list of Items.
@@ -27,6 +27,7 @@ import com.simtuit.hat.dummy.VoteContent;
  */
 public class VoteFragment extends Fragment implements AbsListView.OnItemClickListener, View.OnClickListener {
 
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -35,7 +36,6 @@ public class VoteFragment extends Fragment implements AbsListView.OnItemClickLis
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-
     private OnFragmentInteractionListener mListener;
 
     /**
@@ -75,7 +75,6 @@ public class VoteFragment extends Fragment implements AbsListView.OnItemClickLis
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
-        // TODO: Change Adapter to display your content
         mAdapter = new ArrayAdapter<VoteContent.Vote>(getActivity(),
                 android.R.layout.simple_list_item_1, android.R.id.text1, VoteContent.ITEMS);
     }
@@ -92,8 +91,12 @@ public class VoteFragment extends Fragment implements AbsListView.OnItemClickLis
         ((AdapterView<ListAdapter>) mListView).setAdapter(mAdapter);
 
 
-        Button button = (Button) view.findViewById(R.id.add_button);
-        button.setOnClickListener(this);
+        Button addButton = (Button) view.findViewById(R.id.add_button);
+        addButton.setOnClickListener(this);
+
+
+        Button pickButton = (Button) view.findViewById(R.id.pick_button);
+        pickButton.setOnClickListener(this);
 
         // Set OnItemClickListener so we can be notified on item clicks
         mListView.setOnItemClickListener(this);
@@ -122,9 +125,6 @@ public class VoteFragment extends Fragment implements AbsListView.OnItemClickLis
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         if (null != mListener) {
-            // Notify the active callbacks interface (the activity, if the
-            // fragment is attached to one) that an item has been selected.
-            mListener.onVoteSelected(VoteContent.ITEMS.get(position).id);
         }
     }
 
@@ -143,13 +143,44 @@ public class VoteFragment extends Fragment implements AbsListView.OnItemClickLis
 
     @Override
     public void onClick(View view) {
-        View voteText = ((View)view.getParent()).findViewById(R.id.vote_content);
-        if(null != voteText)
+        switch(view.getId())
         {
-            VoteContent.addVote(((EditText)voteText).getText().toString());
-            ((ArrayAdapter)mAdapter).notifyDataSetChanged();
-            ((EditText)voteText).setText("");
+            case R.id.add_button:
+            {
+                View voteText = ((View)view.getParent()).findViewById(R.id.vote_content);
+
+                if(null != voteText) {
+                    String voteContent = ((EditText) voteText).getText().toString();
+                    if(!voteContent.isEmpty())
+                    {
+                        VoteContent.addVote(voteContent);
+                        ((ArrayAdapter) mAdapter).notifyDataSetChanged();
+                        ((EditText) voteText).setText("");
+
+                    }
+
+                }
+                break;
+            }
+            case R.id.pick_button:
+            {
+
+                ((HatActivity)getActivity()).onPick(pick());
+                break;
+            }
         }
+
+    }
+
+
+    /**
+     * Picks out of the Hat
+     * @return (VoteContent.Vote) picked Vote
+     */
+    protected VoteContent.Vote pick()
+    {
+        Random r = new Random(System.nanoTime());
+        return (VoteContent.Vote)mAdapter.getItem(r.nextInt(mAdapter.getCount()));
     }
 
     /**
@@ -163,8 +194,8 @@ public class VoteFragment extends Fragment implements AbsListView.OnItemClickLis
     * >Communicating with Other Fragments</a> for more information.
     */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        public void onVoteSelected(long id);
+
+        public void onPick(VoteContent.Vote picked);
     }
 
 }
