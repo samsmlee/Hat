@@ -98,13 +98,16 @@ public class VoteFragment
         mListView = (AbsListView) view.findViewById(android.R.id.list);
         ((AdapterView<ListAdapter>) mListView).setAdapter(mAdapter);
 
+        // Set onEditorActionListener to Vote Content EditText (R.id.vote_content)
         EditText voteContent = (EditText) view.findViewById(R.id.vote_content);
         voteContent.setOnEditorActionListener(this);
 
 
+        // Set onClickListener to Add Button (R.id.add_button)
         mAddButton = (Button) view.findViewById(R.id.add_button);
         mAddButton.setOnClickListener(this);
 
+        // Set onClickListener on Pick Button (R.id.pick_button)
         Button pickButton = (Button) view.findViewById(R.id.pick_button);
         pickButton.setOnClickListener(this);
 
@@ -151,6 +154,11 @@ public class VoteFragment
         }
     }
 
+    /**
+     * If add_button is clicked, the Vote is added.
+     * If pick_button is clicked, a Vote is picked.
+     * @param view clicked View
+     */
     @Override
     public void onClick(View view) {
         switch(view.getId())
@@ -172,6 +180,10 @@ public class VoteFragment
 
     }
 
+    /**
+     * Shows a warning message that the Hat is empty
+     * Used when Pick button is clicked while Hat is empty
+     */
     protected void alertEmptyHat() {
 
         Context context = getActivity();
@@ -192,6 +204,9 @@ public class VoteFragment
         return (VoteContent.Vote)mAdapter.getItem(r.nextInt(mAdapter.getCount()));
     }
 
+    /**
+     * Adds a Vote if the text from R.id.vote_content EditText is not empty
+     */
     protected void addVote() {
         View voteText = getView().findViewById(R.id.vote_content);
 
@@ -209,6 +224,13 @@ public class VoteFragment
         }
     }
 
+    /**
+     * Handles Enter from soft keyboard on R.id.vote_content
+     * @param v
+     * @param actionId
+     * @param event
+     * @return true if no further action is required from onEditorAction
+     */
     @Override
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 
