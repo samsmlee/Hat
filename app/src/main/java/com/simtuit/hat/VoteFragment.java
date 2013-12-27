@@ -1,12 +1,14 @@
 package com.simtuit.hat;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
-import android.app.Fragment;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -27,7 +29,9 @@ import java.util.Random;
  * Activities containing this fragment MUST implement the {@link Callbacks}
  * interface.
  */
-public class VoteFragment extends Fragment implements AbsListView.OnItemClickListener, View.OnClickListener {
+public class VoteFragment
+        extends Fragment
+        implements AbsListView.OnItemClickListener, View.OnClickListener, TextView.OnEditorActionListener{
 
 
     // TODO: Rename parameter arguments, choose names that match
@@ -39,6 +43,8 @@ public class VoteFragment extends Fragment implements AbsListView.OnItemClickLis
     private String mParam1;
     private String mParam2;
     private OnFragmentInteractionListener mListener;
+
+    private Button mAddButton;
 
     /**
      * The fragment's ListView/GridView.
@@ -92,10 +98,12 @@ public class VoteFragment extends Fragment implements AbsListView.OnItemClickLis
         mListView = (AbsListView) view.findViewById(android.R.id.list);
         ((AdapterView<ListAdapter>) mListView).setAdapter(mAdapter);
 
+        EditText voteContent = (EditText) view.findViewById(R.id.vote_content);
+        voteContent.setOnEditorActionListener(this);
 
-        Button addButton = (Button) view.findViewById(R.id.add_button);
-        addButton.setOnClickListener(this);
 
+        mAddButton = (Button) view.findViewById(R.id.add_button);
+        mAddButton.setOnClickListener(this);
 
         Button pickButton = (Button) view.findViewById(R.id.pick_button);
         pickButton.setOnClickListener(this);
@@ -149,19 +157,7 @@ public class VoteFragment extends Fragment implements AbsListView.OnItemClickLis
         {
             case R.id.add_button:
             {
-                View voteText = ((View)view.getParent()).findViewById(R.id.vote_content);
-
-                if(null != voteText) {
-                    String voteContent = ((EditText) voteText).getText().toString();
-                    if(!voteContent.isEmpty())
-                    {
-                        VoteContent.addVote(voteContent);
-                        ((ArrayAdapter) mAdapter).notifyDataSetChanged();
-                        ((EditText) voteText).setText("");
-
-                    }
-
-                }
+                this.addVote();
                 break;
             }
             case R.id.pick_button:
@@ -195,6 +191,39 @@ public class VoteFragment extends Fragment implements AbsListView.OnItemClickLis
         Random r = new Random(System.nanoTime());
         return (VoteContent.Vote)mAdapter.getItem(r.nextInt(mAdapter.getCount()));
     }
+
+    protected void addVote() {
+        View voteText = getView().findViewById(R.id.vote_content);
+
+        if(null != voteText) {
+            String voteContent = ((EditText) voteText).getText().toString();
+            if(!voteContent.isEmpty())
+            {
+                VoteContent.addVote(voteContent);
+                ((ArrayAdapter) mAdapter).notifyDataSetChanged();
+                ((EditText) voteText).setText("");
+
+
+            }
+
+        }
+    }
+
+    @Override
+    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+
+        if(event == null) {
+            switch (actionId) {
+                case EditorInfo.IME_ACTION_DONE:
+                    mAddButton.performClick();
+                    return true;
+            }
+
+        }
+
+        return false;
+    }
+
 
     /**
     * This interface must be implemented by activities that contain this
