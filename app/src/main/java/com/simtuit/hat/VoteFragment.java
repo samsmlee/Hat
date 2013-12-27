@@ -1,6 +1,7 @@
 package com.simtuit.hat;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
@@ -13,6 +14,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Random;
 
@@ -164,12 +166,23 @@ public class VoteFragment extends Fragment implements AbsListView.OnItemClickLis
             }
             case R.id.pick_button:
             {
-
-                ((HatActivity)getActivity()).onPick(pick());
+                if(mAdapter.getCount() <= 0)
+                    alertEmptyHat();
+                else
+                    ((HatActivity)getActivity()).onPick(pick());
                 break;
             }
         }
 
+    }
+
+    protected void alertEmptyHat() {
+
+        Context context = getActivity();
+
+        CharSequence text = context.getString(R.string.empty_hat_warning);
+        Toast toast = Toast.makeText(context, text, Toast.LENGTH_SHORT);
+        toast.show();
     }
 
 
