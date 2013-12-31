@@ -12,6 +12,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
+        android:singleLine="true"
+        android:maxLength="@integer/edit_vote_maxlength"
         />
     <LinearLayout
         android:layout_width="match_parent"
