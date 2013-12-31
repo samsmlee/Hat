@@ -57,6 +57,11 @@ public class VoteFragment
      */
     private ListAdapter mAdapter;
 
+    /**
+     * Toast for Empty Hat alert
+     */
+    private Toast mEmptyHatToast;
+
     // TODO: Rename and change types of parameters
     public static VoteFragment newInstance(String param1, String param2) {
         VoteFragment fragment = new VoteFragment();
@@ -128,6 +133,19 @@ public class VoteFragment
         }
     }
 
+    /**
+     * Called when the Fragment is no longer resumed.  This is generally
+     * tied to {@link android.app.Activity#onPause() Activity.onPause} of the containing
+     * Activity's lifecycle.
+     */
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        if(mEmptyHatToast != null)
+            mEmptyHatToast.cancel();
+    }
+
     @Override
     public void onDetach() {
         super.onDetach();
@@ -190,8 +208,10 @@ public class VoteFragment
         Context context = getActivity();
 
         CharSequence text = context.getString(R.string.empty_hat_warning);
-        Toast toast = Toast.makeText(context, text, Toast.LENGTH_SHORT);
-        toast.show();
+        if(mEmptyHatToast == null)
+            mEmptyHatToast = Toast.makeText(context, text, Toast.LENGTH_SHORT);
+
+        mEmptyHatToast.show();
     }
 
 
