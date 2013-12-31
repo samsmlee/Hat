@@ -1,21 +1,26 @@
 package com.simtuit.hat;
 
 import android.app.Activity;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
 
-public class HatActivity extends Activity implements VoteFragment.OnFragmentInteractionListener, PickFragment.OnFragmentInteractionListener{
 
+public class HatActivity extends Activity
+        implements VoteFragment.OnFragmentInteractionListener, PickFragment.OnFragmentInteractionListener, EditVoteFragment.OnFragmentInteractionListener{
+
+    VoteFragment mVoteFragment;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_hat);
 
         if (savedInstanceState == null) {
+            mVoteFragment = new VoteFragment();
             getFragmentManager().beginTransaction()
-                    .add(R.id.container, new VoteFragment())
+                    .add(R.id.container, mVoteFragment, "View")
                     .commit();
         }
     }
@@ -50,13 +55,26 @@ public class HatActivity extends Activity implements VoteFragment.OnFragmentInte
                 .commit();
     }
 
+    @Override
+    public void onEdit(int position, String old_content) {
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        EditVoteFragment fr = EditVoteFragment.newInstance(position, old_content);
+        fr.show(ft, "dialog");
+    }
+
 
     @Override
     public void onEditHat() {
 
         getFragmentManager().beginTransaction()
-                .replace(R.id.container, new VoteFragment())
+                .replace(R.id.container, mVoteFragment)
                 .addToBackStack(null)
                 .commit();
+    }
+
+    @Override
+    public void onEditted(int position, String newContent) {
+
+        mVoteFragment.editVote(position, newContent);
     }
 }

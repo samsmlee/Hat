@@ -31,7 +31,7 @@ import java.util.Random;
  */
 public class VoteFragment
         extends Fragment
-        implements AbsListView.OnItemClickListener, View.OnClickListener, TextView.OnEditorActionListener{
+        implements AbsListView.OnItemClickListener, View.OnClickListener, TextView.OnEditorActionListener, AdapterView.OnItemLongClickListener {
 
 
     // TODO: Rename parameter arguments, choose names that match
@@ -90,7 +90,6 @@ public class VoteFragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        super.onCreateView(inflater, container, savedInstanceState);
 
         View view = inflater.inflate(R.layout.fragment_vote, container, false);
 
@@ -113,6 +112,7 @@ public class VoteFragment
 
         // Set OnItemClickListener so we can be notified on item clicks
         mListView.setOnItemClickListener(this);
+        mListView.setOnItemLongClickListener(this);
 
         return view;
     }
@@ -138,6 +138,7 @@ public class VoteFragment
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         if (null != mListener) {
+            mListener.onEdit(position, ((VoteContent.Vote)mAdapter.getItem(position)).content);
         }
     }
 
@@ -225,6 +226,15 @@ public class VoteFragment
     }
 
     /**
+     * Deletes a Vote
+     * @param position Position of the Vote to be deleted
+     */
+    protected void deleteVote(int position) {
+        ((ArrayAdapter) mAdapter).remove(mAdapter.getItem(position));
+        ((ArrayAdapter) mAdapter).notifyDataSetChanged();
+    }
+
+    /**
      * Handles Enter from soft keyboard on R.id.vote_content
      * @param v
      * @param actionId
@@ -246,6 +256,22 @@ public class VoteFragment
         return false;
     }
 
+    @Override
+    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+        deleteVote(position);
+        return false;
+    }
+
+    /**
+     * Edits a Vote
+     * @param position
+     * @param newContent                               "
+     */
+    public void editVote(int position, String newContent) {
+        ((VoteContent.Vote)mAdapter.getItem(position)).content = newContent;
+        ((ArrayAdapter) mAdapter).notifyDataSetChanged();
+    }
+
 
     /**
     * This interface must be implemented by activities that contain this
@@ -260,6 +286,8 @@ public class VoteFragment
     public interface OnFragmentInteractionListener {
 
         public void onPick(VoteContent.Vote picked);
+
+        public void onEdit(int position, String old_content);
     }
 
 }
