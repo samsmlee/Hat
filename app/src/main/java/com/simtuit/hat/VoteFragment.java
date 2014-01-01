@@ -288,7 +288,15 @@ public class VoteFragment
      * @param newContent                               "
      */
     public void editVote(int position, String newContent) {
-        ((VoteContent.Vote)mAdapter.getItem(position)).content = newContent;
+        ((VoteContent.Vote) mAdapter.getItem(position)).content = newContent;
+        ((ArrayAdapter) mAdapter).notifyDataSetChanged();
+    }
+
+    /**
+     * Clears the Hat.
+     */
+    public void clearHat() {
+        ((ArrayAdapter) mAdapter).clear();
         ((ArrayAdapter) mAdapter).notifyDataSetChanged();
     }
 

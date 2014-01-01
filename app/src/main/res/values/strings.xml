@@ -2,7 +2,7 @@
 <resources>
 
     <string name="app_name">Hat</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_clear">Clear</string>
     <string name="vote_hint">Enter a Vote</string>
     <string name="add_button">Add Vote</string>
     <string name="pick_button">Pick</string>
