@@ -14,6 +14,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -44,7 +45,7 @@ public class VoteFragment
     private String mParam2;
     private OnFragmentInteractionListener mListener;
 
-    private Button mAddButton;
+    private ImageButton mAddButton;
 
     /**
      * The fragment's ListView/GridView.
@@ -108,7 +109,7 @@ public class VoteFragment
 
 
         // Set onClickListener to Add Button (R.id.add_button)
-        mAddButton = (Button) view.findViewById(R.id.add_button);
+        mAddButton = (ImageButton) view.findViewById(R.id.add_button);
         mAddButton.setOnClickListener(this);
 
         // Set onClickListener on Pick Button (R.id.pick_button)

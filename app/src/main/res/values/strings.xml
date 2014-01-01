@@ -4,7 +4,6 @@
     <string name="app_name">Hat</string>
     <string name="action_clear">Clear</string>
     <string name="vote_hint">Enter a Vote</string>
-    <string name="add_button">Add Vote</string>
     <string name="pick_button">Pick</string>
     <string name="edit_hat_button">Edit Hat</string>
     <string name="empty_hat_warning">Add at least one Vote</string>
