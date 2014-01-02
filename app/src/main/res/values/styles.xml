@@ -8,4 +8,10 @@
         <item name="android:colorBackground">@color/colorbackground</item>
     </style>
 
+    <style name="EditVoteDialogTheme" parent="android:Theme.Holo.Light.Dialog">
+
+        <item name="android:background">@color/windowbackground</item>
+    </style>
+
+
 </resources>

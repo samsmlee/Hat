@@ -6,13 +6,6 @@
     tools:context="com.simtuit.hat.PickFragment">
 
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Your result is:"
-        android:gravity="center"
-        />
-
-    <TextView
         android:id="@+id/result_textview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -29,13 +22,13 @@
         android:gravity="center"
         >
 
-        <Button
+        <ImageButton
             android:id="@+id/edit_hat_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingLeft="50dp"
             android:paddingRight="50dp"
-            android:text="@string/edit_hat_button"
+            android:src="@drawable/ic_action_edit"
             />
 
     </LinearLayout>

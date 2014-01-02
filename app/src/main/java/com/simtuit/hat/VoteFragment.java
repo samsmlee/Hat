@@ -12,7 +12,6 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListAdapter;
@@ -113,7 +112,7 @@ public class VoteFragment
         mAddButton.setOnClickListener(this);
 
         // Set onClickListener on Pick Button (R.id.pick_button)
-        Button pickButton = (Button) view.findViewById(R.id.pick_button);
+        ImageButton pickButton = (ImageButton) view.findViewById(R.id.pick_button);
         pickButton.setOnClickListener(this);
 
         // Set OnItemClickListener so we can be notified on item clicks

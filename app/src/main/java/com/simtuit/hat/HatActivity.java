@@ -79,4 +79,9 @@ public class HatActivity extends Activity
 
         mVoteFragment.editVote(position, newContent);
     }
+
+    @Override
+    public void onDeleted(int position) {
+        mVoteFragment.deleteVote(position);
+    }
 }

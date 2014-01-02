@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 
 
 /**
@@ -57,6 +58,9 @@ public class EditVoteFragment extends DialogFragment implements View.OnClickList
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Set the style of the dialog
+        setStyle(STYLE_NORMAL, R.style.EditVoteDialogTheme);
         if (getArguments() != null) {
             mVoteContent = getArguments().getString(ARG_VOTECONTENT);
             mVotePosition = getArguments().getInt(VOTE_POSITION);
@@ -70,14 +74,15 @@ public class EditVoteFragment extends DialogFragment implements View.OnClickList
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_edit_vote, container, false);
 
+
         // Set up the dialog
         getDialog().setCanceledOnTouchOutside(true);
         getDialog().setTitle(getResources().getString(R.string.edit_vote_dialog_title));
         ((EditText)view.findViewById(R.id.vote_edittext)).setText(mVoteContent);
 
         // Set this as onClickListener for its buttons
-        ((Button)view.findViewById(R.id.edit_button)).setOnClickListener(this);
-        ((Button)view.findViewById(R.id.cancel_edit_button)).setOnClickListener(this);
+        ((ImageButton)view.findViewById(R.id.edit_button)).setOnClickListener(this);
+        ((ImageButton)view.findViewById(R.id.delete_button)).setOnClickListener(this);
         
 
         return view;
@@ -109,8 +114,9 @@ public class EditVoteFragment extends DialogFragment implements View.OnClickList
                 mListener.onEditted(mVotePosition, vote_content.getText().toString());
                 getDialog().dismiss();
                 break;
-            case R.id.cancel_edit_button:
-                getDialog().cancel();
+            case R.id.delete_button:
+                mListener.onDeleted(mVotePosition);
+                getDialog().dismiss();
                 break;
         }
     }
@@ -128,6 +134,8 @@ public class EditVoteFragment extends DialogFragment implements View.OnClickList
     public interface OnFragmentInteractionListener {
 
         public void onEditted(int position, String newContent);
+
+        public void onDeleted(int position);
     }
 
 }
