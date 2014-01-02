@@ -278,7 +278,6 @@ public class VoteFragment
 
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-        deleteVote(position);
         return false;
     }
 
