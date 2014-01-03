@@ -187,12 +187,15 @@ public class VoteFragment
                 this.addVote();
                 break;
             }
-            case R.id.pick_button:
-            {
-                if(mAdapter.getCount() <= 0)
+            case R.id.pick_button: {
+                if (mAdapter.getCount() <= 0) {
                     alertEmptyHat();
-                else
-                    ((HatActivity)getActivity()).onPick(pick());
+                } else {
+
+                    if ((getActivity()) != null) {
+                        ((HatActivity) getActivity()).onPick(pick());
+                    }
+                }
                 break;
             }
         }
@@ -219,10 +222,44 @@ public class VoteFragment
      * Picks out of the Hat
      * @return (VoteContent.Vote) picked Vote
      */
-    protected VoteContent.Vote pick()
-    {
+    protected VoteContent.Vote[] pick() {
+        int currCount = mAdapter.getCount();
+        int pick;
+        VoteContent.Vote temp;
+        VoteContent.Vote[] picked = new VoteContent.Vote[currCount];
+
+        // Get seed from the nanoseconds of current time
         Random r = new Random(System.nanoTime());
-        return (VoteContent.Vote)mAdapter.getItem(r.nextInt(mAdapter.getCount()));
+
+        // Go through from 0 to mAdapter.getCount() and pick random Votes for each index
+        // For each index, swap the randomly picked Vote and the original Vote at the index
+        // Kind of like a selection sort, but instead of finding the index of the max/min value,
+        //  we pick a random index
+        for (int i = 0; i < picked.length; i++) {
+            pick = r.nextInt(currCount);
+
+            // Swap the Vote in the current index with the Vote in the picked index
+
+            temp = picked[i];
+
+            // Bring the picked Vote to the current index
+            if (picked[i + pick] == null) {
+                picked[i] = (VoteContent.Vote) mAdapter.getItem(i + pick);
+            } else {
+                picked[i] = picked[i + pick];
+            }
+
+            // Put the Vote that used to be in the current index to the randomly picked index.
+            if (temp == null) {
+                picked[i + pick] = (VoteContent.Vote) mAdapter.getItem(i);
+            } else {
+                picked[i + pick] = temp;
+            }
+
+            currCount--;
+        }
+
+        return picked;
     }
 
     /**
@@ -312,7 +349,7 @@ public class VoteFragment
     */
     public interface OnFragmentInteractionListener {
 
-        public void onPick(VoteContent.Vote picked);
+        public void onPick(VoteContent.Vote[] picked);
 
         public void onEdit(int position, String old_content);
     }

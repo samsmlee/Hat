@@ -2,7 +2,6 @@ package com.simtuit.hat;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,11 +20,10 @@ import android.widget.TextView;
  *
  */
 public class PickFragment extends Fragment implements View.OnClickListener {
-    // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PICKED = "mPicked";
 
-    private String mPicked;
+    private String[] mPicked;
 
     private OnFragmentInteractionListener mListener;
 
@@ -36,11 +34,10 @@ public class PickFragment extends Fragment implements View.OnClickListener {
      * @param picked (String) picked Vote.
      * @return A new instance of fragment PickFragment.
      */
-    // TODO: Rename and change types and number of parameters
-    public static PickFragment newInstance(String picked) {
+    public static PickFragment newInstance(String[] picked) {
         PickFragment fragment = new PickFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PICKED, picked);
+        args.putStringArray(ARG_PICKED, picked);
         fragment.setArguments(args);
         return fragment;
     }
@@ -52,7 +49,7 @@ public class PickFragment extends Fragment implements View.OnClickListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mPicked = getArguments().getString(ARG_PICKED);
+            mPicked = getArguments().getStringArray(ARG_PICKED);
         }
     }
 
@@ -66,18 +63,12 @@ public class PickFragment extends Fragment implements View.OnClickListener {
         ImageButton restartButton = (ImageButton) view.findViewById(R.id.edit_hat_button);
         restartButton.setOnClickListener(this);
 
-        updatePick(view, mPicked);
+        updatePick(view, mPicked, 0);
 
         // Inflate the layout for this fragment
         return view;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onEditHat();
-        }
-    }
 
     @Override
     public void onAttach(Activity activity) {
@@ -108,9 +99,14 @@ public class PickFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    public void updatePick(View view, String picked)
-    {
-        ((TextView)view.findViewById(R.id.result_textview)).setText(picked);
+    public void updatePick(View view, String[] picked, int index) {
+        if (picked != null) {
+
+            ((TextView) view.findViewById(R.id.result_textview)).setText(picked[index]);
+        } else {
+            ((TextView) view.findViewById(R.id.result_textview)).setText("");
+        }
+
     }
 
     /**

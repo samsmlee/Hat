@@ -49,10 +49,22 @@ public class HatActivity extends Activity
     }
 
     @Override
-    public void onPick(VoteContent.Vote picked) {
+    public void onPick(VoteContent.Vote[] picked) {
 
+        String[] pickedStrings;
+        if (picked == null) {
+            pickedStrings = null;
+
+
+        } else {
+
+            pickedStrings = new String[picked.length];
+            for (int i = 0; i < picked.length; i++) {
+                pickedStrings[i] = (picked[i]!= null ? picked[i].toString() : "");
+            }
+        }
         getFragmentManager().beginTransaction()
-                .replace(R.id.container, PickFragment.newInstance(picked.toString()))
+                .replace(R.id.container, PickFragment.newInstance(pickedStrings))
                 .addToBackStack(null)
                 .commit();
     }
