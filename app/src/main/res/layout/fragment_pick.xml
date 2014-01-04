@@ -6,7 +6,14 @@
     tools:context="com.simtuit.hat.PickFragment">
 
     <TextView
-        android:id="@+id/result_textview"
+        android:id="@+id/textview_result_counter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/textsize_result_counter"
+        android:gravity="center"
+        />
+    <TextView
+        android:id="@+id/textview_result"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:text=""
@@ -28,7 +35,18 @@
             android:layout_height="wrap_content"
             android:paddingLeft="50dp"
             android:paddingRight="50dp"
-            android:src="@drawable/ic_action_edit"
+            android:src="@drawable/ic_action_edit_hat"
+            android:contentDescription="@string/description_edit_hat"
+            />
+
+        <ImageButton
+            android:id="@+id/button_repick_hat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="50dp"
+            android:paddingRight="50dp"
+            android:src="@drawable/ic_action_repick_hat"
+            android:contentDescription="@string/description_repick_hat"
             />
 
     </LinearLayout>

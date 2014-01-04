@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="result_textsize">100dp</dimen>
+    <dimen name="result_textsize">100sp</dimen>
+    <dimen name="textsize_result_counter">32sp</dimen>
 </resources>

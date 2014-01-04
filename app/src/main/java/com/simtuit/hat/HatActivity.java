@@ -5,6 +5,7 @@ import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 
 
@@ -12,6 +13,9 @@ public class HatActivity extends Activity
         implements VoteFragment.OnFragmentInteractionListener, PickFragment.OnFragmentInteractionListener, EditVoteFragment.OnFragmentInteractionListener{
 
     VoteFragment mVoteFragment;
+
+    PickFragment mPickFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,27 +52,26 @@ public class HatActivity extends Activity
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Called when the Pick Button is pressed in VoteFragment
+     * Opens PickFragment which displays the shuffled list of Votes
+     * @param picked    Array of Votes in shuffled order
+     */
     @Override
     public void onPick(VoteContent.Vote[] picked) {
-
-        String[] pickedStrings;
-        if (picked == null) {
-            pickedStrings = null;
-
-
-        } else {
-
-            pickedStrings = new String[picked.length];
-            for (int i = 0; i < picked.length; i++) {
-                pickedStrings[i] = (picked[i]!= null ? picked[i].toString() : "");
-            }
-        }
+        mPickFragment = PickFragment.newInstance(extractVoteStrings(picked));
         getFragmentManager().beginTransaction()
-                .replace(R.id.container, PickFragment.newInstance(pickedStrings))
+                .replace(R.id.container, mPickFragment)
                 .addToBackStack(null)
                 .commit();
     }
 
+    /**
+     * Called when an item is pressed in VoteFragment
+     * Opens up the Edit Vote Dialog (EditVoteFragment)
+     * @param position      position of the Vote to be edited
+     * @param old_content   old content of the Vote
+     */
     @Override
     public void onEdit(int position, String old_content) {
         FragmentTransaction ft = getFragmentManager().beginTransaction();
@@ -76,7 +79,10 @@ public class HatActivity extends Activity
         fr.show(ft, "dialog");
     }
 
-
+    /**
+     * Called when the Edit Hat button is pressed in PickFragment
+     * Re-opens the VoteFragment
+     */
     @Override
     public void onEditHat() {
 
@@ -86,14 +92,59 @@ public class HatActivity extends Activity
                 .commit();
     }
 
+    /**
+     * Called when the RePick Hat button is pressed in PickFragment
+     * Updates the PickFragment with a new list of results
+     * @param view  The view of PickFragment that displays the results
+     */
     @Override
-    public void onEditted(int position, String newContent) {
+    public void onRePick(View view) {
+        mPickFragment.updatePick(view, extractVoteStrings(mVoteFragment.pick()), 0);
+    }
+
+    /**
+     * Called when the Edit button is pressed in EditVoteFragment
+     * Edits the Vote at the specified position
+     * @param position      position of the Vote to be edited
+     * @param newContent    String for the new content for the Vote
+     */
+    @Override
+    public void onEdited(int position, String newContent) {
 
         mVoteFragment.editVote(position, newContent);
     }
 
+    /**
+     * Called when the Delete button is pressed in EditVoteFragment
+     * Deletes the Vote at specified position
+     * @param position  position of the Vote to be deleted
+     */
     @Override
     public void onDeleted(int position) {
         mVoteFragment.deleteVote(position);
+    }
+
+
+    /**
+     * Utility method that extracts the content of Votes from an array of Votes
+     * @param votes Array of Votes to extract contents from
+     * @return      Array of Strings that contain the contents of Votes from votes argument
+     */
+    protected String[] extractVoteStrings(VoteContent.Vote[] votes) {
+        String[] extractedStrings;
+
+        // if votes is null, then extractedStrings should be null too
+        if (votes == null) {
+            return null;
+
+        } else {
+
+            extractedStrings = new String[votes.length];
+            for (int i = 0; i < votes.length; i++) {
+                extractedStrings[i] = (votes[i]!= null ? votes[i].toString() : "");
+            }
+        }
+
+        return extractedStrings;
     }
 }

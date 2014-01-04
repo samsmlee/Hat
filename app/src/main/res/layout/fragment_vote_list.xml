@@ -51,7 +51,7 @@
             android:paddingRight="50dp"
             android:text="@string/pick_button"
             android:layout_gravity="center"
-            android:src="@drawable/ic_action_shuffle"
+            android:src="@drawable/ic_action_pick"
             />
 
     </LinearLayout>

@@ -6,7 +6,6 @@ import android.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
@@ -111,7 +110,7 @@ public class EditVoteFragment extends DialogFragment implements View.OnClickList
         switch (v.getId()) {
             case R.id.edit_button:
                 EditText vote_content = (EditText)getView().findViewById(R.id.vote_edittext);
-                mListener.onEditted(mVotePosition, vote_content.getText().toString());
+                mListener.onEdited(mVotePosition, vote_content.getText().toString());
                 getDialog().dismiss();
                 break;
             case R.id.delete_button:
@@ -133,7 +132,7 @@ public class EditVoteFragment extends DialogFragment implements View.OnClickList
      */
     public interface OnFragmentInteractionListener {
 
-        public void onEditted(int position, String newContent);
+        public void onEdited(int position, String newContent);
 
         public void onDeleted(int position);
     }

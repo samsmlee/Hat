@@ -63,6 +63,9 @@ public class PickFragment extends Fragment implements View.OnClickListener {
         ImageButton restartButton = (ImageButton) view.findViewById(R.id.edit_hat_button);
         restartButton.setOnClickListener(this);
 
+        ImageButton repickbutton = (ImageButton) view.findViewById(R.id.button_repick_hat);
+        repickbutton.setOnClickListener(this);
+
         updatePick(view, mPicked, 0);
 
         // Inflate the layout for this fragment
@@ -87,6 +90,12 @@ public class PickFragment extends Fragment implements View.OnClickListener {
         mListener = null;
     }
 
+    /**
+     * Called when v is clicked.
+     * If edit_hat_button was clicked, (@link HatActivity#onEditHat()) is called
+     * If button_repick_hat was clicked,
+     * @param v view that was Clicked
+     */
     @Override
     public void onClick(View v) {
         switch(v.getId())
@@ -96,16 +105,81 @@ public class PickFragment extends Fragment implements View.OnClickListener {
                 ((HatActivity)getActivity()).onEditHat();
                 break;
             }
+            case R.id.button_repick_hat:
+                ((HatActivity)getActivity()).onRePick(this.getView());
+                break;
         }
     }
 
+    /**
+     * Updates the result
+     * @param view      The main view of (@link PickFragment)
+     * @param picked    Array of Strings that contains the shuffled list of (@VoteFragment.Vote)
+     * @param index     index in (@link picked) to show
+     */
     public void updatePick(View view, String[] picked, int index) {
-        if (picked != null) {
-
-            ((TextView) view.findViewById(R.id.result_textview)).setText(picked[index]);
-        } else {
-            ((TextView) view.findViewById(R.id.result_textview)).setText("");
+        if (view == null) {
+            return;
         }
+
+        if (picked == null) {
+            clearResult(view);
+        } else {
+
+            // Show the result counter: Result %d of %d
+            TextView resultCounter = (TextView) view.findViewById(R.id.textview_result_counter);
+
+            if (resultCounter != null) {
+                String resultCount = getActivity().getString(R.string.result_counter);
+
+                resultCounter.setText(String.format(resultCount, index + 1, picked.length));
+            }
+
+            // Show the result
+            ((TextView) view.findViewById(R.id.textview_result)).setText(picked[index]);
+        }
+
+    }
+
+    public void showShuffle(View view) {
+        clearResult(view);
+
+        if (view == null) {
+            return;
+        }
+
+        TextView resultCounter = (TextView) view.findViewById(R.id.textview_result_counter);
+        String shuffling = getActivity().getString(R.string.shuffling);
+
+        if (resultCounter != null) {
+            resultCounter.setText(shuffling);
+
+
+        }
+
+    }
+
+    /**
+     * Clears the result from (@link view)
+     * @param view  The main view of (@link PickFragment)
+     */
+    protected void clearResult(View view) {
+        if (view == null) {
+            return;
+        }
+
+        TextView resultCounter = ((TextView) view.findViewById(R.id.textview_result_counter));
+        if (resultCounter != null) {
+
+            resultCounter.setText("");
+        }
+
+        TextView result = ((TextView) view.findViewById(R.id.textview_result));
+
+        if (result != null) {
+            result.setText("");
+        }
+
 
     }
 
@@ -121,6 +195,8 @@ public class PickFragment extends Fragment implements View.OnClickListener {
      */
     public interface OnFragmentInteractionListener {
         public void onEditHat();
+
+        public void onRePick(View view);
 
     }
 
