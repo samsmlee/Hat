@@ -5,8 +5,6 @@ import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-
 
 
 public class HatActivity extends Activity
@@ -90,16 +88,6 @@ public class HatActivity extends Activity
                 .replace(R.id.container, mVoteFragment)
                 .addToBackStack(null)
                 .commit();
-    }
-
-    /**
-     * Called when the RePick Hat button is pressed in PickFragment
-     * Updates the PickFragment with a new list of results
-     * @param view  The view of PickFragment that displays the results
-     */
-    @Override
-    public void onRePick(View view) {
-        mPickFragment.showResult(view, extractVoteStrings(mVoteFragment.pick()));
     }
 
     /**

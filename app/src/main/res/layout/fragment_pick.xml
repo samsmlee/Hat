@@ -48,16 +48,6 @@
             android:contentDescription="@string/description_edit_hat"
             />
 
-        <ImageButton
-            android:id="@+id/button_repick_hat"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="50dp"
-            android:paddingRight="50dp"
-            android:src="@drawable/ic_action_repick_hat"
-            android:contentDescription="@string/description_repick_hat"
-            />
-
     </LinearLayout>
 
 </RelativeLayout>

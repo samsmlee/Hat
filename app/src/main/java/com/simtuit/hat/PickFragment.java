@@ -76,9 +76,6 @@ public class PickFragment extends Fragment implements View.OnClickListener {
         ImageButton restartButton = (ImageButton) view.findViewById(R.id.edit_hat_button);
         restartButton.setOnClickListener(this);
 
-        ImageButton repickbutton = (ImageButton) view.findViewById(R.id.button_repick_hat);
-        repickbutton.setOnClickListener(this);
-
         // Show the result
         showResult(view, mPicked);
 
@@ -107,7 +104,6 @@ public class PickFragment extends Fragment implements View.OnClickListener {
     /**
      * Called when v is clicked.
      * If edit_hat_button was clicked, (@link HatActivity#onEditHat()) is called
-     * If button_repick_hat was clicked,
      * @param v view that was Clicked
      */
     @Override
@@ -119,9 +115,6 @@ public class PickFragment extends Fragment implements View.OnClickListener {
                 ((HatActivity)getActivity()).onEditHat();
                 break;
             }
-            case R.id.button_repick_hat:
-                ((HatActivity)getActivity()).onRePick(this.getView());
-                break;
         }
     }
 
@@ -250,8 +243,6 @@ public class PickFragment extends Fragment implements View.OnClickListener {
      */
     public interface OnFragmentInteractionListener {
         public void onEditHat();
-
-        public void onRePick(View view);
 
     }
 
