@@ -1,5 +1,7 @@
 package com.simtuit.hat;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
@@ -26,6 +28,10 @@ public class PickFragment extends Fragment implements View.OnClickListener {
     private String[] mPicked;
 
     private OnFragmentInteractionListener mListener;
+
+    private View mResultView;
+
+    private int mLongAnimationDuration;
 
     /**
      * Use this factory method to create a new instance of
@@ -57,8 +63,15 @@ public class PickFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-
         View view = inflater.inflate(R.layout.fragment_pick, container, false);
+
+        // Initially hide the result view.
+        mResultView = view.findViewById(R.id.view_result);
+        mResultView.setVisibility(View.GONE);
+
+        // Retrieve and cache the system's default "short" animation time.
+        mLongAnimationDuration = getResources().getInteger(
+                android.R.integer.config_longAnimTime);
 
         ImageButton restartButton = (ImageButton) view.findViewById(R.id.edit_hat_button);
         restartButton.setOnClickListener(this);
@@ -66,7 +79,8 @@ public class PickFragment extends Fragment implements View.OnClickListener {
         ImageButton repickbutton = (ImageButton) view.findViewById(R.id.button_repick_hat);
         repickbutton.setOnClickListener(this);
 
-        updatePick(view, mPicked, 0);
+        // Show the result
+        showResult(view, mPicked);
 
         // Inflate the layout for this fragment
         return view;
@@ -112,12 +126,27 @@ public class PickFragment extends Fragment implements View.OnClickListener {
     }
 
     /**
+     * It shows the result: Fades out, updates the result view and fade it back in.
+     * @param view      The main view of (@link PickFragment)
+     * @param picked    Array of Strings that contains the shuffled list of (@VoteFragment.Vote)
+     */
+    public void showResult(View view, String[] picked) {
+
+        // Fade Out, including the result view(if any result is showing)
+        fadeOutResult();
+        // Update the result view
+        updatePick(view, picked, 0);
+        // Fade the result view back in
+        fadeInResult();
+    }
+
+    /**
      * Updates the result
      * @param view      The main view of (@link PickFragment)
      * @param picked    Array of Strings that contains the shuffled list of (@VoteFragment.Vote)
      * @param index     index in (@link picked) to show
      */
-    public void updatePick(View view, String[] picked, int index) {
+    protected void updatePick(View view, String[] picked, int index) {
         if (view == null) {
             return;
         }
@@ -141,22 +170,48 @@ public class PickFragment extends Fragment implements View.OnClickListener {
 
     }
 
-    public void showShuffle(View view) {
-        clearResult(view);
-
-        if (view == null) {
-            return;
-        }
-
-        TextView resultCounter = (TextView) view.findViewById(R.id.textview_result_counter);
-        String shuffling = getActivity().getString(R.string.shuffling);
-
-        if (resultCounter != null) {
-            resultCounter.setText(shuffling);
+    /**
+     * Fades in the result view (@link mResultView)
+     */
+    public void fadeInResult() {
 
 
-        }
+        // Set the result view to 100% opacity to prepare for Fade In
+        mResultView.setAlpha(0f);
+        mResultView.setVisibility(View.VISIBLE);
 
+
+        // Animate the content view to 100% opacity, and clear any animation
+        // listener set on the view.
+        mResultView.animate()
+                .alpha(1f)
+                .setDuration(mLongAnimationDuration)
+                .setListener(null);
+    }
+
+
+    /**
+     * Fades out the result view (@link mResultView)
+     */
+    public void fadeOutResult() {
+
+        // Set the result view to 100% opacity if already visible, or 0% if not visible currently
+        //  to prepare for Fade Out
+        mResultView.setAlpha(mResultView.getVisibility() == View.GONE ? 0f : 1f);
+        mResultView.setVisibility(View.VISIBLE);
+
+        // Animate the result view to 0% opacity. After the animation ends,
+        // set its visibility to GONE as an optimization step (it won't
+        // participate in layout passes, etc.)
+        mResultView.animate()
+                .alpha(0f)
+                .setDuration(mLongAnimationDuration)
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        mResultView.setVisibility(View.GONE);
+                    }
+                });
     }
 
     /**

@@ -99,7 +99,7 @@ public class HatActivity extends Activity
      */
     @Override
     public void onRePick(View view) {
-        mPickFragment.updatePick(view, extractVoteStrings(mVoteFragment.pick()), 0);
+        mPickFragment.showResult(view, extractVoteStrings(mVoteFragment.pick()));
     }
 
     /**
