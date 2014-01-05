@@ -24,12 +24,34 @@ import android.widget.TextView;
 public class PickFragment extends Fragment implements View.OnClickListener {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PICKED = "mPicked";
+    private static final String ARG_INDEX = "mIndex";
 
+    // Array of strings of (@link VoteContent.Vote)
     private String[] mPicked;
 
-    private OnFragmentInteractionListener mListener;
+    // Current index of mPicked
+    private int mIndex;
 
+    // View which contains the Result views (@link mResultTextView)
+    //  and (@link mResultCounterTextView)
     private View mResultView;
+
+    // TextView that displays the result
+    private TextView mResultTextView;
+
+    // TextView that displays the result counter
+    private TextView mResultCounterTextView;
+
+    // ImageButton that edits the Hat
+    private ImageButton mEditHatButton;
+
+
+    // ImageButton that navigates to the previous button
+    private ImageButton mPrevPickButton;
+
+
+    // ImageButton that navigates to the next button
+    private ImageButton mNextPickButton;
 
     private int mLongAnimationDuration;
 
@@ -40,13 +62,15 @@ public class PickFragment extends Fragment implements View.OnClickListener {
      * @param picked (String) picked Vote.
      * @return A new instance of fragment PickFragment.
      */
-    public static PickFragment newInstance(String[] picked) {
+    public static PickFragment newInstance(String[] picked, int index) {
         PickFragment fragment = new PickFragment();
         Bundle args = new Bundle();
         args.putStringArray(ARG_PICKED, picked);
+        args.putInt(ARG_INDEX, index);
         fragment.setArguments(args);
         return fragment;
     }
+
     public PickFragment() {
         // Required empty public constructor
     }
@@ -54,9 +78,6 @@ public class PickFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mPicked = getArguments().getStringArray(ARG_PICKED);
-        }
     }
 
     @Override
@@ -65,30 +86,81 @@ public class PickFragment extends Fragment implements View.OnClickListener {
 
         View view = inflater.inflate(R.layout.fragment_pick, container, false);
 
+        // Initialize all member fields that represent views by extracting them from the layout
+        initMemberViews(view);
+
         // Initially hide the result view.
-        mResultView = view.findViewById(R.id.view_result);
         mResultView.setVisibility(View.GONE);
 
         // Retrieve and cache the system's default "short" animation time.
         mLongAnimationDuration = getResources().getInteger(
                 android.R.integer.config_longAnimTime);
 
-        ImageButton restartButton = (ImageButton) view.findViewById(R.id.edit_hat_button);
-        restartButton.setOnClickListener(this);
-
-        // Show the result
-        showResult(view, mPicked);
+        // Set as onClickListener: (@link mEditHatButton), (@link mPrevPickButton),
+        //  (@link mNextPickButton)
+        mEditHatButton.setOnClickListener(this);
+        mPrevPickButton.setOnClickListener(this);
+        mNextPickButton.setOnClickListener(this);
 
         // Inflate the layout for this fragment
         return view;
     }
 
+    /**
+     * Initiailizes all member views from (@link view)
+     * @param view  The root view for this (@link PickFragment)
+     */
+    private void initMemberViews(View view) {
+
+        // (@link mResultView)
+        mResultView = view.findViewById(R.id.view_result);
+
+        // (@link mResultCounterTextView)
+        mResultCounterTextView = (TextView) view.findViewById(R.id.textview_result_counter);
+
+        // (@link mResultTextView)
+        mResultTextView = (TextView) view.findViewById(R.id.textview_result);
+
+        // (@link mEditHatButton)
+        mEditHatButton = (ImageButton) view.findViewById(R.id.edit_hat_button);
+
+        // (@link mPrevPickButton)
+        mPrevPickButton = (ImageButton) view.findViewById(R.id.button_prev_pick);
+
+        // (@link mNextPickButton)
+        mNextPickButton = (ImageButton) view.findViewById(R.id.button_next_pick);
+    }
+
+    /**
+     * Saves (@link mIndex)
+     */
+    @Override
+    public void onPause() {
+        super.onPause();
+        getArguments().putInt(ARG_INDEX, mIndex);
+
+    }
+
+    /**
+     *
+     */
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (getArguments() != null) {
+            mPicked = getArguments().getStringArray(ARG_PICKED);
+            mIndex = getArguments().getInt(ARG_INDEX);
+        }
+
+        // Show the result
+        showResult();
+
+    }
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mListener = (OnFragmentInteractionListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -98,7 +170,6 @@ public class PickFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
     }
 
     /**
@@ -115,50 +186,53 @@ public class PickFragment extends Fragment implements View.OnClickListener {
                 ((HatActivity)getActivity()).onEditHat();
                 break;
             }
+            case R.id.button_prev_pick:
+                if(mIndex > 0)
+                    updateResultView(mIndex - 1);
+                break;
+            case R.id.button_next_pick:
+
+                if(mIndex < mPicked.length - 1)
+                    updateResultView(mIndex + 1);
+                break;
         }
     }
 
     /**
-     * It shows the result: Fades out, updates the result view and fade it back in.
-     * @param view      The main view of (@link PickFragment)
-     * @param picked    Array of Strings that contains the shuffled list of (@VoteFragment.Vote)
+     * It shows the result(for the first time):
+     *  Fades out, updates the result view and fade it back in.
+     *
      */
-    public void showResult(View view, String[] picked) {
+    public void showResult() {
 
         // Fade Out, including the result view(if any result is showing)
         fadeOutResult();
         // Update the result view
-        updatePick(view, picked, 0);
+        updateResultView(mIndex);
         // Fade the result view back in
         fadeInResult();
     }
 
     /**
      * Updates the result
-     * @param view      The main view of (@link PickFragment)
-     * @param picked    Array of Strings that contains the shuffled list of (@VoteFragment.Vote)
-     * @param index     index in (@link picked) to show
+     * @param newIndex  New index in (@link mPicked) to show
+     *
      */
-    protected void updatePick(View view, String[] picked, int index) {
-        if (view == null) {
-            return;
-        }
-
-        if (picked == null) {
-            clearResult(view);
+    protected void updateResultView(int newIndex) {
+        // Check if mPicked is null, or newIndex is an invalid index
+        if (mPicked == null || newIndex < 0 || newIndex >= mPicked.length) {
+            clearResult();
         } else {
+            mIndex = newIndex;
 
             // Show the result counter: Result %d of %d
-            TextView resultCounter = (TextView) view.findViewById(R.id.textview_result_counter);
-
-            if (resultCounter != null) {
+            if (mResultCounterTextView != null) {
                 String resultCount = getActivity().getString(R.string.result_counter);
-
-                resultCounter.setText(String.format(resultCount, index + 1, picked.length));
+                mResultCounterTextView.setText(String.format(resultCount, mIndex + 1, mPicked.length));
             }
 
             // Show the result
-            ((TextView) view.findViewById(R.id.textview_result)).setText(picked[index]);
+            mResultTextView.setText(mPicked[mIndex]);
         }
 
     }
@@ -209,26 +283,14 @@ public class PickFragment extends Fragment implements View.OnClickListener {
 
     /**
      * Clears the result from (@link view)
-     * @param view  The main view of (@link PickFragment)
      */
-    protected void clearResult(View view) {
-        if (view == null) {
-            return;
+    protected void clearResult() {
+        if (mResultCounterTextView != null) {
+            mResultCounterTextView.setText("");
         }
-
-        TextView resultCounter = ((TextView) view.findViewById(R.id.textview_result_counter));
-        if (resultCounter != null) {
-
-            resultCounter.setText("");
+        if (mResultTextView != null) {
+            mResultTextView.setText("");
         }
-
-        TextView result = ((TextView) view.findViewById(R.id.textview_result));
-
-        if (result != null) {
-            result.setText("");
-        }
-
-
     }
 
     /**

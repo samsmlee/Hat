@@ -4,5 +4,7 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="result_textsize">50sp</dimen>
     <dimen name="textsize_result_counter">24sp</dimen>
+    <dimen name="padding_pick_nav">50dp</dimen>
+    <dimen name="padding_edit_hat_button">50dp</dimen>
 
 </resources>

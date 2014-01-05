@@ -39,15 +39,34 @@
         >
 
         <ImageButton
+            android:id="@+id/button_prev_pick"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/padding_pick_nav"
+            android:paddingRight="@dimen/padding_pick_nav"
+            android:src="@drawable/ic_action_previous_pick"
+            android:contentDescription="@string/description_edit_hat"
+            />
+
+        <ImageButton
             android:id="@+id/edit_hat_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="50dp"
-            android:paddingRight="50dp"
+            android:paddingLeft="@dimen/padding_edit_hat_button"
+            android:paddingRight="@dimen/padding_edit_hat_button"
             android:src="@drawable/ic_action_edit_hat"
             android:contentDescription="@string/description_edit_hat"
             />
 
+        <ImageButton
+            android:id="@+id/button_next_pick"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/padding_pick_nav"
+            android:paddingRight="@dimen/padding_pick_nav"
+            android:src="@drawable/ic_action_next_pick"
+            android:contentDescription="@string/description_edit_hat"
+            />
     </LinearLayout>
 
 </RelativeLayout>

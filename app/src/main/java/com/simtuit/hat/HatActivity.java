@@ -57,7 +57,7 @@ public class HatActivity extends Activity
      */
     @Override
     public void onPick(VoteContent.Vote[] picked) {
-        mPickFragment = PickFragment.newInstance(extractVoteStrings(picked));
+        mPickFragment = PickFragment.newInstance(extractVoteStrings(picked), 0);
         getFragmentManager().beginTransaction()
                 .replace(R.id.container, mPickFragment)
                 .addToBackStack(null)
