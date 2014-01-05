@@ -20,7 +20,7 @@ public class HatActivity extends Activity
         setContentView(R.layout.activity_hat);
 
         if (savedInstanceState == null) {
-            mVoteFragment = new VoteFragment();
+            mVoteFragment = VoteFragment.newInstance(false);
             getFragmentManager().beginTransaction()
                     .add(R.id.container, mVoteFragment, "View")
                     .commit();
@@ -66,7 +66,7 @@ public class HatActivity extends Activity
 
     /**
      * Called when an item is pressed in VoteFragment
-     * Opens up the Edit Vote Dialog (EditVoteFragment)
+     * Opens up the Edit Vote Dialog (@link EditVoteFragment)
      * @param position      position of the Vote to be edited
      * @param old_content   old content of the Vote
      */
@@ -75,6 +75,23 @@ public class HatActivity extends Activity
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         EditVoteFragment fr = EditVoteFragment.newInstance(position, old_content);
         fr.show(ft, "dialog");
+    }
+
+    /**
+     * Called when user wants to view the picks (NOT a new shuffle)
+     * (@link mPickFragment) is restored
+     */
+    @Override
+    public void onViewPicks() {
+
+        // if mPickFragment isn't there, do nothing
+        if (mPickFragment == null) {
+            return;
+        }
+        getFragmentManager().beginTransaction()
+                .replace(R.id.container, mPickFragment)
+                .addToBackStack(null)
+                .commit();
     }
 
     /**

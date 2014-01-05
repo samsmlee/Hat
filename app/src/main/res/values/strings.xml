@@ -13,5 +13,6 @@
     <string name="edit_vote_dialog_title">Edit Vote</string>
     <string name="description_edit_hat">Edit Hat</string>
     <string name="result_counter" formatted="false">Result %d of %d</string>
+    <string name="description_pick_hat">Pick</string>
 
 </resources>

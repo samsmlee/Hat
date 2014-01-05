@@ -33,15 +33,8 @@ public class VoteFragment
         extends Fragment
         implements AbsListView.OnItemClickListener, View.OnClickListener, TextView.OnEditorActionListener, AdapterView.OnItemLongClickListener {
 
+    private static final String ARG_SHUFFLED = "mShuffled";
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
     private OnFragmentInteractionListener mListener;
 
     private ImageButton mAddButton;
@@ -58,16 +51,22 @@ public class VoteFragment
     private ListAdapter mAdapter;
 
     /**
+     * indicates whether the Votes have been shuffled yet
+     */
+    private boolean mShuffled;
+
+    private ImageButton mViewPickedButton;
+
+    /**
      * Toast for Empty Hat alert
      */
     private Toast mEmptyHatToast;
 
-    // TODO: Rename and change types of parameters
-    public static VoteFragment newInstance(String param1, String param2) {
+
+    public static VoteFragment newInstance(boolean shuffled) {
         VoteFragment fragment = new VoteFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putBoolean(ARG_SHUFFLED, shuffled);
         fragment.setArguments(args);
         return fragment;
     }
@@ -83,10 +82,6 @@ public class VoteFragment
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
 
         mAdapter = new ArrayAdapter<VoteContent.Vote>(getActivity(),
                 android.R.layout.simple_list_item_1, android.R.id.text1, VoteContent.ITEMS);
@@ -102,6 +97,10 @@ public class VoteFragment
         mListView = (AbsListView) view.findViewById(android.R.id.list);
         ((AdapterView<ListAdapter>) mListView).setAdapter(mAdapter);
 
+        // Set OnItemClickListener so we can be notified on item clicks
+        mListView.setOnItemClickListener(this);
+        mListView.setOnItemLongClickListener(this);
+
         // Set onEditorActionListener to Vote Content EditText (R.id.vote_content)
         EditText voteContent = (EditText) view.findViewById(R.id.vote_content);
         voteContent.setOnEditorActionListener(this);
@@ -115,9 +114,9 @@ public class VoteFragment
         ImageButton pickButton = (ImageButton) view.findViewById(R.id.pick_button);
         pickButton.setOnClickListener(this);
 
-        // Set OnItemClickListener so we can be notified on item clicks
-        mListView.setOnItemClickListener(this);
-        mListView.setOnItemLongClickListener(this);
+        // Set onClickListener on View Pick Button (R.id.button_view_picked)
+        mViewPickedButton = (ImageButton) view.findViewById(R.id.button_view_picked);
+        mViewPickedButton.setOnClickListener(this);
 
         return view;
     }
@@ -134,16 +133,30 @@ public class VoteFragment
     }
 
     /**
-     * Called when the Fragment is no longer resumed.  This is generally
-     * tied to {@link android.app.Activity#onPause() Activity.onPause} of the containing
-     * Activity's lifecycle.
+     * Save (@link mShuffled)
+     * Cancel Empty Hat Alert
      */
     @Override
     public void onPause() {
         super.onPause();
 
+        getArguments().putBoolean(ARG_SHUFFLED, mShuffled);
+
         if(mEmptyHatToast != null)
             mEmptyHatToast.cancel();
+    }
+
+    /**
+     * Retrieve (@link mShuffled)
+     */
+    @Override
+    public void onResume() {
+        super.onResume();
+
+
+        if (getArguments() != null) {
+            setShuffled(getArguments().getBoolean(ARG_SHUFFLED, false));
+        }
     }
 
     @Override
@@ -175,7 +188,8 @@ public class VoteFragment
 
     /**
      * If add_button is clicked, the Vote is added.
-     * If pick_button is clicked, a Vote is picked.
+     * If pick_button is clicked, Votes are picked.
+     * If button_view_picked is clicked, PickFragment is shown
      * @param view clicked View
      */
     @Override
@@ -193,11 +207,30 @@ public class VoteFragment
                 } else {
 
                     if ((getActivity()) != null) {
+                        setShuffled(true);
                         ((HatActivity) getActivity()).onPick(pick());
                     }
                 }
                 break;
+
             }
+            case R.id.button_view_picked:
+
+                if ((getActivity()) != null) {
+                    ((HatActivity) getActivity()).onViewPicks();
+                }
+                break;
+        }
+
+    }
+
+
+    public void setShuffled(boolean shuffled) {
+        this.mShuffled = shuffled;
+
+        if (mViewPickedButton != null) {
+            mViewPickedButton.setVisibility(shuffled ? View.VISIBLE : View.GONE);
+
         }
 
     }
@@ -352,6 +385,8 @@ public class VoteFragment
         public void onPick(VoteContent.Vote[] picked);
 
         public void onEdit(int position, String old_content);
+
+        public void onViewPicks();
     }
 
 }

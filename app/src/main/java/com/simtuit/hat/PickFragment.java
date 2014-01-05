@@ -189,6 +189,8 @@ public class PickFragment extends Fragment implements View.OnClickListener {
             case R.id.button_prev_pick:
                 if(mIndex > 0)
                     updateResultView(mIndex - 1);
+                else if (mIndex == 0)
+                    ((HatActivity)getActivity()).onEditHat();
                 break;
             case R.id.button_next_pick:
 
