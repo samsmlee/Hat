@@ -1,8 +1,12 @@
 package com.simtuit.hat;
 
 import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
+import android.support.v13.app.FragmentStatePagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -14,16 +18,30 @@ public class HatActivity extends Activity
 
     PickFragment mPickFragment;
 
+    private ScreenSlidePagerAdapter mSectionsPagerAdapter;
+
+    private ViewPager mViewPager;
+
+    // The index for the first result view
+    private final int mPosResults = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_hat);
 
+
+        // PagerAdapter that holds all the fragments to navigate
+        mSectionsPagerAdapter = new ScreenSlidePagerAdapter(getFragmentManager());
+
+        // Set up the ViewPager with the sections adapter.
+        // Swipe navigation with animation
+        mViewPager = (ViewPager) findViewById(R.id.pager);
+        mViewPager.setAdapter(mSectionsPagerAdapter);
+
         if (savedInstanceState == null) {
+            // Create a VoteFragment
             mVoteFragment = VoteFragment.newInstance(false);
-            getFragmentManager().beginTransaction()
-                    .add(R.id.container, mVoteFragment, "View")
-                    .commit();
         }
     }
 
@@ -34,6 +52,21 @@ public class HatActivity extends Activity
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.hat, menu);
         return true;
+    }
+
+    /**
+     * Overrides onBackPressed() to simulate the Back navigation within the ScreenSlidePagerAdapter
+     */
+    @Override
+    public void onBackPressed() {
+        if (mViewPager.getCurrentItem() == 0) {
+            // If the user is currently looking at the first step, allow the system to handle the
+            // Back button. This calls finish() on this activity and pops the back stack.
+            moveTaskToBack(true);
+        } else {
+            // Otherwise, select the previous step.
+            mViewPager.setCurrentItem(mViewPager.getCurrentItem() - 1);
+        }
     }
 
     @Override
@@ -57,11 +90,11 @@ public class HatActivity extends Activity
      */
     @Override
     public void onPick(VoteContent.Vote[] picked) {
+
         mPickFragment = PickFragment.newInstance(extractVoteStrings(picked), 0);
-        getFragmentManager().beginTransaction()
-                .replace(R.id.container, mPickFragment)
-                .addToBackStack(null)
-                .commit();
+
+        mSectionsPagerAdapter.notifyDataSetChanged();
+        mViewPager.setCurrentItem(mPosResults);
     }
 
     /**
@@ -88,10 +121,8 @@ public class HatActivity extends Activity
         if (mPickFragment == null) {
             return;
         }
-        getFragmentManager().beginTransaction()
-                .replace(R.id.container, mPickFragment)
-                .addToBackStack(null)
-                .commit();
+
+        mViewPager.setCurrentItem(mPosResults);
     }
 
     /**
@@ -101,10 +132,7 @@ public class HatActivity extends Activity
     @Override
     public void onEditHat() {
 
-        getFragmentManager().beginTransaction()
-                .replace(R.id.container, mVoteFragment)
-                .addToBackStack(null)
-                .commit();
+        mViewPager.setCurrentItem(0);
     }
 
     /**
@@ -152,4 +180,35 @@ public class HatActivity extends Activity
 
         return extractedStrings;
     }
+
+
+    /**
+     * A {@link android.support.v13.app.FragmentPagerAdapter} that returns a fragment corresponding to
+     * one of the sections/tabs/pages.
+     */
+    public class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
+
+        public ScreenSlidePagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+
+            return (position == 0 ? mVoteFragment : mPickFragment);
+
+        }
+
+        @Override
+        public int getCount() {
+            return (mPickFragment == null ? 1 : 2);
+        }
+
+        @Override
+        public int getItemPosition(Object object) {
+            return POSITION_NONE;
+        }
+    }
+
+
 }
