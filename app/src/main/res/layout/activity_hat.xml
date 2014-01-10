@@ -17,10 +17,10 @@
             android:id="@+id/button_center_nav"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="@dimen/padding_pick_button"
-            android:paddingRight="@dimen/padding_pick_button"
-            android:src="@drawable/ic_action_edit_hat"
-            android:contentDescription="@string/description_edit_hat"
+            android:paddingLeft="@dimen/padding_center_button"
+            android:paddingRight="@dimen/padding_center_button"
+            android:src="@drawable/ic_action_pick"
+            android:contentDescription="@string/description_pick_hat"
 
             android:layout_centerHorizontal="true"
             />
@@ -32,7 +32,7 @@
             android:paddingLeft="@dimen/padding_pick_nav"
             android:paddingRight="@dimen/padding_pick_nav"
             android:src="@drawable/ic_action_previous_pick"
-            android:contentDescription="@string/description_edit_hat"
+            android:contentDescription="@string/description_prev_nav"
 
             android:layout_toLeftOf="@id/button_center_nav"
             />
@@ -44,7 +44,7 @@
             android:paddingLeft="@dimen/padding_pick_nav"
             android:paddingRight="@dimen/padding_pick_nav"
             android:src="@drawable/ic_action_next_pick"
-            android:contentDescription="@string/description_edit_hat"
+            android:contentDescription="@string/description_next_nav"
 
 
             android:layout_toRightOf="@id/button_center_nav"

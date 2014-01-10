@@ -14,5 +14,7 @@
     <string name="description_edit_hat">Edit Hat</string>
     <string name="result_counter" formatted="false">Result %d of %d</string>
     <string name="description_pick_hat">Pick</string>
+    <string name="description_prev_nav">Previous</string>
+    <string name="description_next_nav">Next</string>
 
 </resources>

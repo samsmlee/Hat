@@ -102,6 +102,7 @@ public class HatActivity extends Activity
         if (l instanceof VoteFragment) {
 
             mCenterNavButton.setImageResource(R.drawable.ic_action_pick);
+            mCenterNavButton.setContentDescription(getString(R.string.description_pick_hat));
             mLeftNavButton.setVisibility(View.GONE);
 
 
@@ -115,6 +116,7 @@ public class HatActivity extends Activity
         // update for PickFragment
         } else if (l instanceof PickFragment) {
             mCenterNavButton.setImageResource(R.drawable.ic_action_edit_hat);
+            mCenterNavButton.setContentDescription(getString(R.string.description_edit_hat));
             mLeftNavButton.setVisibility(View.VISIBLE);
 
             if(((PickFragment) l).isLast())
