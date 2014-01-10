@@ -8,18 +8,12 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
 
 /**
- * A simple {@link android.app.Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link PickFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link PickFragment#newInstance} factory method to
- * create an instance of this fragment.
- *
+ * PickFragment
+ * A fragment that represents a Pick/Result
  */
 public class PickFragment extends Fragment implements View.OnClickListener {
     private static final String ARG_INDEX = "mIndex";
@@ -37,17 +31,6 @@ public class PickFragment extends Fragment implements View.OnClickListener {
 
     // TextView that displays the result
     private TextView mResultTextView;
-
-    // ImageButton that edits the Hat
-    private ImageButton mEditHatButton;
-
-
-    // ImageButton that navigates to the previous button
-    private ImageButton mPrevPickButton;
-
-
-    // ImageButton that navigates to the next button
-    private ImageButton mNextPickButton;
 
     private int mLongAnimationDuration;
 
@@ -95,12 +78,6 @@ public class PickFragment extends Fragment implements View.OnClickListener {
         mLongAnimationDuration = getResources().getInteger(
                 android.R.integer.config_longAnimTime);
 
-        // Set as onClickListener: (@link mEditHatButton), (@link mPrevPickButton),
-        //  (@link mNextPickButton)
-        mEditHatButton.setOnClickListener(this);
-        mPrevPickButton.setOnClickListener(this);
-        mNextPickButton.setOnClickListener(this);
-
         // Inflate the layout for this fragment
         return view;
     }
@@ -113,15 +90,6 @@ public class PickFragment extends Fragment implements View.OnClickListener {
 
         // (@link mResultTextView)
         mResultTextView = (TextView) view.findViewById(R.id.textview_result);
-
-        // (@link mEditHatButton)
-        mEditHatButton = (ImageButton) view.findViewById(R.id.edit_hat_button);
-
-        // (@link mPrevPickButton)
-        mPrevPickButton = (ImageButton) view.findViewById(R.id.button_prev_pick);
-
-        // (@link mNextPickButton)
-        mNextPickButton = (ImageButton) view.findViewById(R.id.button_next_pick);
     }
 
     /**
@@ -175,18 +143,18 @@ public class PickFragment extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         switch(v.getId())
         {
-            case R.id.edit_hat_button:
+            case R.id.button_center_nav:
             {
                 ((HatActivity)getActivity()).onEditHat();
                 break;
             }
-            case R.id.button_prev_pick:
+            case R.id.button_left_nav:
                 if(mIndex > 0)
                     ((HatActivity)getActivity()).onMoveToResult(mIndex - 1);
                 else if (mIndex == 0)
                     ((HatActivity)getActivity()).onEditHat();
                 break;
-            case R.id.button_next_pick:
+            case R.id.button_right_nav:
 
                 if(mIndex < mNumResults - 1)
                     ((HatActivity)getActivity()).onMoveToResult(mIndex + 1);
@@ -286,6 +254,13 @@ public class PickFragment extends Fragment implements View.OnClickListener {
         return String.format(resultCount, mIndex + 1, mNumResults);
     }
 
+    /**
+     * Returns whether the current Picks is the last Pick
+     * @return True if the current Pick/Result is the last one. False, otherwise
+     */
+    public boolean isLast() {
+        return mIndex == mNumResults - 1;
+    }
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated

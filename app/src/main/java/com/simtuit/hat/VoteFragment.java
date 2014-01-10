@@ -21,13 +21,8 @@ import android.widget.Toast;
 import java.util.Random;
 
 /**
- * A fragment representing a list of Items.
- * <p />
- * Large screen devices (such as tablets) are supported by replacing the ListView
- * with a GridView.
- * <p />
- * Activities containing this fragment MUST implement the {@link Callbacks}
- * interface.
+ * VoteFragment
+ * A fragment where the User can view, add, edit, and delete Votes
  */
 public class VoteFragment
         extends Fragment
@@ -54,8 +49,6 @@ public class VoteFragment
      * indicates whether the Votes have been shuffled yet
      */
     private boolean mShuffled;
-
-    private ImageButton mViewPickedButton;
 
     /**
      * Toast for Empty Hat alert
@@ -109,14 +102,6 @@ public class VoteFragment
         // Set onClickListener to Add Button (R.id.add_button)
         mAddButton = (ImageButton) view.findViewById(R.id.add_button);
         mAddButton.setOnClickListener(this);
-
-        // Set onClickListener on Pick Button (R.id.pick_button)
-        ImageButton pickButton = (ImageButton) view.findViewById(R.id.pick_button);
-        pickButton.setOnClickListener(this);
-
-        // Set onClickListener on View Pick Button (R.id.button_view_picked)
-        mViewPickedButton = (ImageButton) view.findViewById(R.id.button_view_picked);
-        mViewPickedButton.setOnClickListener(this);
 
         return view;
     }
@@ -201,7 +186,9 @@ public class VoteFragment
                 this.addVote();
                 break;
             }
-            case R.id.pick_button: {
+            //case R.id.pick_button:
+            case R.id.button_center_nav:
+            {
                 if (mAdapter.getCount() <= 0) {
                     alertEmptyHat();
                 } else {
@@ -214,7 +201,8 @@ public class VoteFragment
                 break;
 
             }
-            case R.id.button_view_picked:
+            //case R.id.button_view_picked:
+            case R.id.button_right_nav:
 
                 if ((getActivity()) != null) {
                     ((HatActivity) getActivity()).onViewPicks();
@@ -224,15 +212,12 @@ public class VoteFragment
 
     }
 
+    public boolean isShuffled() {
+        return mShuffled;
+    }
 
     public void setShuffled(boolean shuffled) {
         this.mShuffled = shuffled;
-
-        if (mViewPickedButton != null) {
-            mViewPickedButton.setVisibility(shuffled ? View.VISIBLE : View.GONE);
-
-        }
-
     }
 
     /**

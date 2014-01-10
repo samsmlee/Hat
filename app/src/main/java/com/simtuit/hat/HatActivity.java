@@ -9,6 +9,8 @@ import android.support.v13.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +29,11 @@ public class HatActivity extends Activity
 
     private ViewPager mViewPager;
 
+    private ImageButton mCenterNavButton;
+    private ImageButton mLeftNavButton;
+    private ImageButton mRightNavButton;
+
+
     // The index for the first result view
     private final int mPosResults = 1;
 
@@ -35,9 +42,27 @@ public class HatActivity extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_hat);
 
+        if (savedInstanceState == null) {
+            // Create a VoteFragment
+            if(mVoteFragment == null)
+                mVoteFragment = VoteFragment.newInstance(false);
+            // Instantiate mPickFragments
+            if(mPickFragments == null)
+                mPickFragments = new ArrayList<>();
+        }
+
 
         // PagerAdapter that holds all the fragments to navigate
         mSectionsPagerAdapter = new ScreenSlidePagerAdapter(getFragmentManager());
+
+
+        mCenterNavButton = (ImageButton) findViewById(R.id.button_center_nav);
+        mLeftNavButton = (ImageButton) findViewById(R.id.button_left_nav);
+        mRightNavButton = (ImageButton) findViewById(R.id.button_right_nav);
+
+
+
+
 
         // Set up the ViewPager with the sections adapter.
         // Swipe navigation with animation
@@ -50,17 +75,55 @@ public class HatActivity extends Activity
                         // When swiping between pages, select the
                         // corresponding tab.
                         setTitle(mSectionsPagerAdapter.getPageTitle(position));
+
+                        updateControls(position);
                     }
                 });
 
-        if (savedInstanceState == null) {
-            // Create a VoteFragment
-            if(mVoteFragment == null)
-                mVoteFragment = VoteFragment.newInstance(false);
-            // Instantiate mPickFragments
-            if(mPickFragments == null)
-                mPickFragments = new ArrayList<>();
+
+        // Update the controls according to the current Fragment
+        updateControls(mViewPager.getCurrentItem());
+
+    }
+
+    /**
+     * Updates the controls depending on the current Fragment
+     * @param position Indicates the position of the current Fragment
+     */
+    private void updateControls(int position) {
+
+        View.OnClickListener l = (View.OnClickListener) mSectionsPagerAdapter.getItem(position);
+
+        mCenterNavButton.setOnClickListener(l);
+        mLeftNavButton.setOnClickListener(l);
+        mRightNavButton.setOnClickListener(l);
+
+        // update for VoteFragment
+        if (l instanceof VoteFragment) {
+
+            mCenterNavButton.setImageResource(R.drawable.ic_action_pick);
+            mLeftNavButton.setVisibility(View.GONE);
+
+
+            if (mVoteFragment == null || !mVoteFragment.isShuffled()) {
+                mRightNavButton.setVisibility(View.GONE);
+            } else {
+
+                mRightNavButton.setVisibility(View.VISIBLE);
+            }
+
+        // update for PickFragment
+        } else if (l instanceof PickFragment) {
+            mCenterNavButton.setImageResource(R.drawable.ic_action_edit_hat);
+            mLeftNavButton.setVisibility(View.VISIBLE);
+
+            if(((PickFragment) l).isLast())
+                mRightNavButton.setVisibility(View.GONE);
+            else
+                mRightNavButton.setVisibility(View.VISIBLE);
+
         }
+
     }
 
 
