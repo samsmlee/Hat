@@ -22,25 +22,21 @@ import android.widget.TextView;
  *
  */
 public class PickFragment extends Fragment implements View.OnClickListener {
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PICKED = "mPicked";
     private static final String ARG_INDEX = "mIndex";
+    private static final String ARG_NUMRESULTS = "mNumResults";
+    private static final String ARG_RESULT = "mResult";
 
-    // Array of strings of (@link VoteContent.Vote)
-    private String[] mPicked;
+    // String that contains the content of this Result
+    private String mResult;
 
-    // Current index of mPicked
+    // index of the current mResult
     private int mIndex;
 
-    // View which contains the Result views (@link mResultTextView)
-    //  and (@link mResultCounterTextView)
-    private View mResultView;
+    // Total number of results
+    private int mNumResults;
 
     // TextView that displays the result
     private TextView mResultTextView;
-
-    // TextView that displays the result counter
-    private TextView mResultCounterTextView;
 
     // ImageButton that edits the Hat
     private ImageButton mEditHatButton;
@@ -58,15 +54,18 @@ public class PickFragment extends Fragment implements View.OnClickListener {
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
-     *
-     * @param picked (String) picked Vote.
-     * @return A new instance of fragment PickFragment.
+     * @param result    (String) content of the picked result
+     * @param index     (int) index at which this result was picked
+     * @param numResults (int) number of all votes/results
+     * @return
      */
-    public static PickFragment newInstance(String[] picked, int index) {
+    public static PickFragment newInstance(String result, int index, int numResults) {
         PickFragment fragment = new PickFragment();
         Bundle args = new Bundle();
-        args.putStringArray(ARG_PICKED, picked);
+
+        args.putString(ARG_RESULT, result);
         args.putInt(ARG_INDEX, index);
+        args.putInt(ARG_NUMRESULTS, numResults);
         fragment.setArguments(args);
         return fragment;
     }
@@ -90,7 +89,7 @@ public class PickFragment extends Fragment implements View.OnClickListener {
         initMemberViews(view);
 
         // Initially hide the result view.
-        mResultView.setVisibility(View.GONE);
+        mResultTextView.setVisibility(View.GONE);
 
         // Retrieve and cache the system's default "short" animation time.
         mLongAnimationDuration = getResources().getInteger(
@@ -111,12 +110,6 @@ public class PickFragment extends Fragment implements View.OnClickListener {
      * @param view  The root view for this (@link PickFragment)
      */
     private void initMemberViews(View view) {
-
-        // (@link mResultView)
-        mResultView = view.findViewById(R.id.view_result);
-
-        // (@link mResultCounterTextView)
-        mResultCounterTextView = (TextView) view.findViewById(R.id.textview_result_counter);
 
         // (@link mResultTextView)
         mResultTextView = (TextView) view.findViewById(R.id.textview_result);
@@ -148,8 +141,9 @@ public class PickFragment extends Fragment implements View.OnClickListener {
     public void onResume() {
         super.onResume();
         if (getArguments() != null) {
-            mPicked = getArguments().getStringArray(ARG_PICKED);
             mIndex = getArguments().getInt(ARG_INDEX);
+            mResult = getArguments().getString(ARG_RESULT);
+            mNumResults = getArguments().getInt(ARG_NUMRESULTS);
         }
 
         // Show the result
@@ -188,14 +182,14 @@ public class PickFragment extends Fragment implements View.OnClickListener {
             }
             case R.id.button_prev_pick:
                 if(mIndex > 0)
-                    updateResultView(mIndex - 1);
+                    ((HatActivity)getActivity()).onMoveToResult(mIndex - 1);
                 else if (mIndex == 0)
                     ((HatActivity)getActivity()).onEditHat();
                 break;
             case R.id.button_next_pick:
 
-                if(mIndex < mPicked.length - 1)
-                    updateResultView(mIndex + 1);
+                if(mIndex < mNumResults - 1)
+                    ((HatActivity)getActivity()).onMoveToResult(mIndex + 1);
                 break;
         }
     }
@@ -207,52 +201,43 @@ public class PickFragment extends Fragment implements View.OnClickListener {
      */
     public void showResult() {
 
-        // Fade Out, including the result view(if any result is showing)
-        fadeOutResult();
-        // Update the result view
-        updateResultView(mIndex);
-        // Fade the result view back in
-        fadeInResult();
-    }
+        // Fade Out, including the result view(if any result is showing) only if it's first result
+        if(mIndex == 0)
+            fadeOutResult();
+        else
+            // Set the result view to 100% opacity to prepare for Fade In
+            mResultTextView.setAlpha(1f);
+            mResultTextView.setVisibility(View.VISIBLE);
 
-    /**
-     * Updates the result
-     * @param newIndex  New index in (@link mPicked) to show
-     *
-     */
-    protected void updateResultView(int newIndex) {
-        // Check if mPicked is null, or newIndex is an invalid index
-        if (mPicked == null || newIndex < 0 || newIndex >= mPicked.length) {
+
+        // Show the result view
+        // Check if mResult is null, or newIndex is an invalid index
+        if (mResult == null || mIndex < 0 || mIndex >= mNumResults) {
             clearResult();
         } else {
-            mIndex = newIndex;
-
-            // Show the result counter: Result %d of %d
-            if (mResultCounterTextView != null) {
-                String resultCount = getActivity().getString(R.string.result_counter);
-                mResultCounterTextView.setText(String.format(resultCount, mIndex + 1, mPicked.length));
-            }
-
             // Show the result
-            mResultTextView.setText(mPicked[mIndex]);
+            mResultTextView.setText(mResult);
         }
 
+        // Fade the result view back in only if it's first result
+        if(mIndex == 0)
+            fadeInResult();
     }
 
     /**
-     * Fades in the result view (@link mResultView)
+     * Fades in the result view (@link mResultTextView)
      */
     public void fadeInResult() {
 
 
         // Set the result view to 100% opacity to prepare for Fade In
-        mResultView.setAlpha(0f);
-        mResultView.setVisibility(View.VISIBLE);
+        mResultTextView.setAlpha(0f);
+        mResultTextView.setVisibility(View.VISIBLE);
 
 
         // Animate the content view to 100% opacity, and clear any animation
         // listener set on the view.
-        mResultView.animate()
+        mResultTextView.animate()
                 .alpha(1f)
                 .setDuration(mLongAnimationDuration)
                 .setListener(null);
@@ -260,25 +245,25 @@ public class PickFragment extends Fragment implements View.OnClickListener {
 
 
     /**
-     * Fades out the result view (@link mResultView)
+     * Fades out the result view (@link mResultTextView)
      */
     public void fadeOutResult() {
 
         // Set the result view to 100% opacity if already visible, or 0% if not visible currently
         //  to prepare for Fade Out
-        mResultView.setAlpha(mResultView.getVisibility() == View.GONE ? 0f : 1f);
-        mResultView.setVisibility(View.VISIBLE);
+        mResultTextView.setAlpha(mResultTextView.getVisibility() == View.GONE ? 0f : 1f);
+        mResultTextView.setVisibility(View.VISIBLE);
 
         // Animate the result view to 0% opacity. After the animation ends,
         // set its visibility to GONE as an optimization step (it won't
         // participate in layout passes, etc.)
-        mResultView.animate()
+        mResultTextView.animate()
                 .alpha(0f)
                 .setDuration(mLongAnimationDuration)
                 .setListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
-                        mResultView.setVisibility(View.GONE);
+                        mResultTextView.setVisibility(View.GONE);
                     }
                 });
     }
@@ -287,12 +272,18 @@ public class PickFragment extends Fragment implements View.OnClickListener {
      * Clears the result from (@link view)
      */
     protected void clearResult() {
-        if (mResultCounterTextView != null) {
-            mResultCounterTextView.setText("");
-        }
         if (mResultTextView != null) {
             mResultTextView.setText("");
         }
+    }
+
+    /**
+     * Generates the Result Counter string: Result %d of %d
+     * @return (CharSequence) Result Counter string
+     */
+    public CharSequence getResultCounterStr() {
+        String resultCount = getActivity().getString(R.string.result_counter);
+        return String.format(resultCount, mIndex + 1, mNumResults);
     }
 
     /**
@@ -307,6 +298,8 @@ public class PickFragment extends Fragment implements View.OnClickListener {
      */
     public interface OnFragmentInteractionListener {
         public void onEditHat();
+
+        public void onMoveToResult(int index);
 
     }
 

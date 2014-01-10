@@ -10,13 +10,18 @@ import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class HatActivity extends Activity
-        implements VoteFragment.OnFragmentInteractionListener, PickFragment.OnFragmentInteractionListener, EditVoteFragment.OnFragmentInteractionListener{
+        implements VoteFragment.OnFragmentInteractionListener, PickFragment.OnFragmentInteractionListener, EditVoteFragment.OnFragmentInteractionListener {
 
+    // Fragment where User can view all the Votes
     VoteFragment mVoteFragment;
 
-    PickFragment mPickFragment;
+    // List of all PickFragments to display
+    List<PickFragment> mPickFragments;
 
     private ScreenSlidePagerAdapter mSectionsPagerAdapter;
 
@@ -38,10 +43,23 @@ public class HatActivity extends Activity
         // Swipe navigation with animation
         mViewPager = (ViewPager) findViewById(R.id.pager);
         mViewPager.setAdapter(mSectionsPagerAdapter);
+        mViewPager.setOnPageChangeListener(
+                new ViewPager.SimpleOnPageChangeListener() {
+                    @Override
+                    public void onPageSelected(int position) {
+                        // When swiping between pages, select the
+                        // corresponding tab.
+                        setTitle(mSectionsPagerAdapter.getPageTitle(position));
+                    }
+                });
 
         if (savedInstanceState == null) {
             // Create a VoteFragment
-            mVoteFragment = VoteFragment.newInstance(false);
+            if(mVoteFragment == null)
+                mVoteFragment = VoteFragment.newInstance(false);
+            // Instantiate mPickFragments
+            if(mPickFragments == null)
+                mPickFragments = new ArrayList<>();
         }
     }
 
@@ -91,10 +109,14 @@ public class HatActivity extends Activity
     @Override
     public void onPick(VoteContent.Vote[] picked) {
 
-        mPickFragment = PickFragment.newInstance(extractVoteStrings(picked), 0);
+        mPickFragments.clear();
+
+        for (int i = 0; i < picked.length; i++) {
+            mPickFragments.add(PickFragment.newInstance(picked[i].content, i, picked.length));
+        }
 
         mSectionsPagerAdapter.notifyDataSetChanged();
-        mViewPager.setCurrentItem(mPosResults);
+        moveToFragment(mPosResults);
     }
 
     /**
@@ -112,17 +134,18 @@ public class HatActivity extends Activity
 
     /**
      * Called when user wants to view the picks (NOT a new shuffle)
-     * (@link mPickFragment) is restored
+     * (@link mPickFragments) are restored
      */
     @Override
     public void onViewPicks() {
 
-        // if mPickFragment isn't there, do nothing
-        if (mPickFragment == null) {
+        // if mPickFragments aren't there, do nothing
+        if (mPickFragments == null || mPickFragments.size() == 0) {
             return;
         }
 
-        mViewPager.setCurrentItem(mPosResults);
+        moveToFragment(mPosResults);
+
     }
 
     /**
@@ -132,7 +155,12 @@ public class HatActivity extends Activity
     @Override
     public void onEditHat() {
 
-        mViewPager.setCurrentItem(0);
+        moveToFragment(0);
+    }
+
+    @Override
+    public void onMoveToResult(int resultIndex) {
+        moveToFragment(resultIndex + 1);
     }
 
     /**
@@ -158,27 +186,8 @@ public class HatActivity extends Activity
     }
 
 
-    /**
-     * Utility method that extracts the content of Votes from an array of Votes
-     * @param votes Array of Votes to extract contents from
-     * @return      Array of Strings that contain the contents of Votes from votes argument
-     */
-    protected String[] extractVoteStrings(VoteContent.Vote[] votes) {
-        String[] extractedStrings;
-
-        // if votes is null, then extractedStrings should be null too
-        if (votes == null) {
-            return null;
-
-        } else {
-
-            extractedStrings = new String[votes.length];
-            for (int i = 0; i < votes.length; i++) {
-                extractedStrings[i] = (votes[i]!= null ? votes[i].toString() : "");
-            }
-        }
-
-        return extractedStrings;
+    private void moveToFragment(int index) {
+        mViewPager.setCurrentItem(index);
     }
 
 
@@ -192,22 +201,60 @@ public class HatActivity extends Activity
             super(fm);
         }
 
+        /**
+         * Returns the Fragment at a certain position
+         * @param position
+         * @return (@link mVoteFragment) if position == 0
+         *  otherwise, corresponding (@link PickFragment) in (@link mPickFragments)
+         */
         @Override
         public Fragment getItem(int position) {
 
-            return (position == 0 ? mVoteFragment : mPickFragment);
+            if (position == 0) {
+                return mVoteFragment;
+            } else {
+                return mPickFragments.get(position - 1);
+            }
 
         }
 
+        /**
+         * Returns total number of all fragments
+         * @return 1 if (@link mPickFragments) aren't there yet
+         * 1 + (@link mPickFragments#size()), otherwise.
+         */
         @Override
         public int getCount() {
-            return (mPickFragment == null ? 1 : 2);
+            return (mPickFragments == null ? 1 : mPickFragments.size() + 1);
         }
 
+        /**
+         * Triggers update of each view every time it's called.
+         * @param object Object representing an item
+         * @return Always returns that (@link object) does not exist
+         */
         @Override
         public int getItemPosition(Object object) {
             return POSITION_NONE;
         }
+
+        /**
+         * Return the title of the page at position.
+         * Returns (@link R.string.app_name) if position == 0
+         * Return
+         * @param position The position of the title requested
+         * @return (CharSequence) (@link R.string.app_name) if position == 0. Otherwise, returns
+         *  the Result Counter of the (@link PickFragment) at position.
+         */
+        @Override
+        public CharSequence getPageTitle(int position) {
+            if(position == 0)
+                return getString(R.string.app_name);
+            else
+                return mPickFragments.get(position - 1).getResultCounterStr();
+        }
+
+
     }
 
 

@@ -1,34 +1,19 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="com.simtuit.hat.PickFragment">
 
-    <LinearLayout
-        android:id="@+id/view_result"
+
+    <TextView
+        android:id="@+id/textview_result"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:textSize="@dimen/result_textsize"
         android:layout_weight="1"
         android:gravity="center"
-        android:orientation="vertical"
-        >
-        <TextView
-            android:id="@+id/textview_result_counter"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/textsize_result_counter"
-            android:gravity="center"
-            />
-        <TextView
-            android:id="@+id/textview_result"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:textSize="@dimen/result_textsize"
-            android:layout_weight="1"
-            android:gravity="center"
-            />
-    </LinearLayout>
+        />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -74,4 +59,4 @@
             />
     </RelativeLayout>
 
-</RelativeLayout>
+</LinearLayout>
