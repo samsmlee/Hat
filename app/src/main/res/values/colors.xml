@@ -3,4 +3,5 @@
 
     <color name="windowbackground">#FFDDDDDD</color>
     <color name="colorbackground">#FFDDDDDD</color>
+    <color name="button_pressed_background">#FFDDDDDD</color>
 </resources>
