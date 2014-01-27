@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.simtuit.hat.PickFragment">
+    tools:context="com.samlee.hat.PickFragment">
 
 
     <TextView

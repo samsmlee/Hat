@@ -1,4 +1,4 @@
-package com.simtuit.hat;
+package com.samlee.hat;
 
 import android.app.Activity;
 import android.app.Fragment;

@@ -1,6 +1,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.simtuit.hat.HatActivity" >
+    tools:context="com.samlee.hat.HatActivity" >
     
     <item android:id="@+id/action_clear"
         android:title="@string/action_clear"

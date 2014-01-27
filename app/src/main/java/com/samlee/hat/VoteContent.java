@@ -1,4 +1,4 @@
-package com.simtuit.hat;
+package com.samlee.hat;
 
 import java.util.ArrayList;
 import java.util.HashMap;

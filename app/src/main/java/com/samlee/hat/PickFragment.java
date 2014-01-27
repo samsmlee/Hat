@@ -1,4 +1,4 @@
-package com.simtuit.hat;
+package com.samlee.hat;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
