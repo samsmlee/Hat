@@ -163,6 +163,11 @@ public class HatActivity extends Activity
             mVoteFragment.clearHat();
             return true;
         }
+        else if (id == R.id.action_save) {
+
+            mVoteFragment.saveHat();
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 

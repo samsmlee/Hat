@@ -3,6 +3,7 @@ package com.samlee.hat;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -231,6 +232,8 @@ public class VoteFragment
         CharSequence text = context.getString(R.string.empty_hat_warning);
         if(mEmptyHatToast == null)
             mEmptyHatToast = Toast.makeText(context, text, Toast.LENGTH_SHORT);
+        else
+            mEmptyHatToast.setText(text);
 
         mEmptyHatToast.show();
     }
@@ -352,6 +355,31 @@ public class VoteFragment
     public void clearHat() {
         ((ArrayAdapter) mAdapter).clear();
         ((ArrayAdapter) mAdapter).notifyDataSetChanged();
+    }
+
+    /**
+     * Saves the Hat
+     */
+    public void saveHat() {
+
+        Context context = getActivity();
+        CharSequence hatToSave = VoteContent.serialize();
+
+        // save the Hat
+        SharedPreferences sharedPref = ((Activity)context).getPreferences(Context.MODE_PRIVATE);
+
+        SharedPreferences.Editor editor = sharedPref.edit();
+
+        editor.putString("myHat", hatToSave.toString());
+        editor.commit();
+
+        // Show message saying that it's saved
+        if(mEmptyHatToast == null)
+            mEmptyHatToast = Toast.makeText(context, context.getString(R.string.hat_saved_message), Toast.LENGTH_SHORT);
+        else
+            mEmptyHatToast.setText(context.getString(R.string.hat_saved_message));
+
+        mEmptyHatToast.show();
     }
 
 

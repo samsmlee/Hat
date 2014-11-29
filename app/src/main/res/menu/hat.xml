@@ -3,7 +3,12 @@
     tools:context="com.samlee.hat.HatActivity" >
     
     <item android:id="@+id/action_clear"
+        android:icon="@drawable/ic_action_discard"
         android:title="@string/action_clear"
-        android:orderInCategory="100"
-        android:showAsAction="never" />
+        android:showAsAction="ifRoom" />
+
+    <item android:id="@+id/action_save"
+        android:icon="@drawable/ic_action_save"
+        android:title="@string/action_save"
+        android:showAsAction="ifRoom" />
 </menu>

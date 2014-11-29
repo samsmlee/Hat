@@ -1,5 +1,7 @@
 package com.samlee.hat;
 
+import org.json.JSONArray;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,6 +35,26 @@ public class VoteContent {
     {
 
         return currID++;
+    }
+
+    public static String serialize()
+    {
+
+        if (ITEMS == null) {
+            return "";
+        }
+
+        JSONArray jsonArray = new JSONArray();
+
+        for (int i = 0; i < ITEMS.size(); ++i) {
+            if (ITEMS.get(i) != null) {
+                jsonArray.put(ITEMS.get(i).content);
+            }
+
+
+        }
+
+        return jsonArray.toString();
     }
 
     /**
